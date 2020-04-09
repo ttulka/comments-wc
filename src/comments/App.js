@@ -45,6 +45,7 @@ export default class App extends HTMLElement {
         this.loadAnswers = this.loadAnswers.bind(this);
         this.leaveComment = this.leaveComment.bind(this);
         this.leaveAnswer = this.leaveAnswer.bind(this);
+        this._addListener = this._addListener.bind(this);
 
         this.service = new CommentsService(this.getAttribute('service'));
 
@@ -52,21 +53,27 @@ export default class App extends HTMLElement {
         this.commentsContainer = this.comments.querySelector('.container');
 
         this.leaveMessage = this.root.querySelector('comments-leave-message');
-        this.leaveMessage.addEventListener('leave-message:submit', ({detail}) => this.leaveComment(detail));
 
         this.loading = new Loading();
 
         this.nextCommentsListener = { handle: () => {} };
         this.nextAnswersListeners = [];
         this.pagination = new Pagination('Load more comments...');
-        this.pagination.addEventListener('pagination:next', () => this.nextCommentsListener.handle());
 
         this.comments.appendChild(this.loading);
         this.comments.appendChild(this.pagination);
+
+        this._listeners = [];
     }
 
     connectedCallback() {
+        this._addListener(this.leaveMessage, 'leave-message:submit', ({detail}) => this.leaveComment(detail));
+        this._addListener(this.pagination, 'pagination:next', e => this.nextCommentsListener.handle());
         this.loadComments();
+    }
+
+    disconnectedCallback() {
+        this._listeners.forEach(({name, listener, el}) => el.removeEventListener(name, listener));
     }
 
     loadComments(next) {
@@ -92,14 +99,15 @@ export default class App extends HTMLElement {
             <span slot="createdAt">${data.createdAt}</span>
             <span slot="body">${data.body}</span>
         `;
-        comment.addEventListener('comment:leave-answer', ({detail}) => this.leaveAnswer(data.id, detail, comment));
+        this._addListener(comment, 'comment:leave-answer', ({detail}) => this.leaveAnswer(data.id, detail, comment));
 
         if (data.answers) {
             data.answers.forEach(comment.showAnswer);
         }
         if (data.next) {
-            this.nextAnswersListeners[comment.id] = { handle: () => this.loadAnswers(comment, data.next) };
-            comment.addEventListener('comment:next-answers', () => this.nextAnswersListeners[comment.id].handle());
+            const nextAnswersListeners = e => this.loadAnswers(comment, data.next);
+            this.nextAnswersListeners[comment.id] = { handle: nextAnswersListeners};
+            this._addListener(comment, 'comment:next-answers', e => this.nextAnswersListeners[comment.id].handle());
 
             comment.showPagination();
         } else {
@@ -109,7 +117,7 @@ export default class App extends HTMLElement {
     }
 
     loadAnswers(comment, next) {
-        console.log('loadAnswers:', next, comment);
+        console.log('loadAnswers:', next);
         comment.hidePagination();
         comment.showLoading();
         this.service.loadAnswers(next)
@@ -145,6 +153,11 @@ export default class App extends HTMLElement {
             body: message
         });
         this.service.leaveAnswer(commentId, {name, message});
+    }
+
+    _addListener(el, name, listener) {
+        el.addEventListener(name, listener);
+        this._listeners.push({el, name, listener});
     }
 }
 

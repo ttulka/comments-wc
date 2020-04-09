@@ -20,7 +20,6 @@ export default class BodyLines extends HTMLElement {
 
     connectedCallback() {
         const slot = this.shadowRoot.querySelector('slot');
-        console.log('BODY VALUE', slot);
     }
 }
 

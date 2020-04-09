@@ -1,3 +1,5 @@
+import Captcha from './Captcha.js';
+
 const THANKS_FOR_MESSAGE = 'Thanks for your message!';
 const WRONG_CAPTCHA = 'Captcha does not match!';
 
@@ -107,7 +109,7 @@ template.innerHTML = `
                 <input name="captcha" maxLength="10" placeholder="Captcha"/>
             </div>
             <div class="captcha">
-                <canvas id="captcha" width="170" height="50"></canvas>
+                <canvas id="captcha" width="170" height="60"></canvas>
             </div>          
         </div>
         <div class="form-row">
@@ -129,19 +131,34 @@ export default class LeaveMessage extends HTMLElement {
 
         this.dispatchEvent = this.dispatchEvent.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
+        this.reloadCaptcha = this.reloadCaptcha.bind(this);
         this.showSuccess = this.showSuccess.bind(this);
         this.showError = this.showError.bind(this);
         this.focus = this.focus.bind(this);
 
-        const form = this.root.querySelector('form');
-        form.addEventListener('submit', e => e.preventDefault() & this.onFormSubmit());
+        this.captchaFn = new Captcha();
+        this.captchaCanvas = this.root.querySelector('canvas#captcha');
+
+        this.form = this.root.querySelector('form');
+        this.submitListener = e => e.preventDefault() & this.onFormSubmit();
 
         this.error = this.root.querySelector('.alert.error');
         this.success = this.root.querySelector('.alert.success');
 
-        this.name = form.querySelector('input[name=name]');
-        this.captcha = form.querySelector('input[name=captcha]');
-        this.message = form.querySelector('textarea[name=message]');
+        this.name = this.form.querySelector('input[name=name]');
+        this.captcha = this.form.querySelector('input[name=captcha]');
+        this.message = this.form.querySelector('textarea[name=message]');
+    }
+
+    connectedCallback() {
+        this.reloadCaptcha();
+        this.form.addEventListener('submit', this.submitListener);
+        this.captchaCanvas.addEventListener('click', this.reloadCaptcha);
+    }
+
+    disconnectedCallback() {
+        this.form.removeEventListener('submit', this.submitListener);
+        this.captchaCanvas.removeEventListener('click', this.reloadCaptcha);
     }
 
     onFormSubmit() {
@@ -167,6 +184,11 @@ export default class LeaveMessage extends HTMLElement {
             this.message.classList.add('error');
             hasError = true;
         }
+        if (captcha.toUpperCase() !== this.captchaFn.getCode().toUpperCase()) {
+            this.showError(WRONG_CAPTCHA);
+            this.captcha.classList.add('error');
+            hasError = true;
+        }
         if (hasError) {
             return;
         }
@@ -176,6 +198,10 @@ export default class LeaveMessage extends HTMLElement {
         this.captcha.value = '';
         this.message.value = '';
         this.showSuccess(THANKS_FOR_MESSAGE);
+    }
+
+    reloadCaptcha() {
+        this.captchaFn.create(this.captchaCanvas);
     }
 
     showSuccess(msg) {
@@ -189,7 +215,6 @@ export default class LeaveMessage extends HTMLElement {
         this.success.style.display = 'none';
         this.error.innerHTML = msg;
         this.error.style.display = 'block';
-        setTimeout(() => (this.error.style.display = 'none'), 3000);
     }
 
     focus() {
