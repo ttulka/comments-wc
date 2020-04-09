@@ -4,6 +4,8 @@ function wait(ms) {
     })
 }
 
+
+
 export default class CommentsService {
     constructor(serviceEndpoint) {
         this.serviceEndpoint = serviceEndpoint.endsWith('/') ? serviceEndpoint : serviceEndpoint + '/';
@@ -22,6 +24,7 @@ export default class CommentsService {
         return wait(500).then(() =>
             fetch(this.serviceEndpoint + next)
                 .then(data => data.json())
+
         );
     }
 

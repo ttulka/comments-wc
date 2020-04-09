@@ -1,5 +1,4 @@
-import './DateFormatted.js';
-import './BodySafe.js';
+import './BodyLines.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -25,7 +24,9 @@ template.innerHTML = `
             <span class="author"><slot name="author">author</slot></span>
             <commnents-date class="createdAt"><slot name="createdAt">createdAt</slot></commnents-date>
         </div>
-        <div class="body"><comments-body><slot name="body">body</slot></comments-body></div>
+        <div class="body">
+            <comments-body-lines><slot name="body">body</slot></comments-body-lines>
+        </div>
     </div>
 `;
 

@@ -11,7 +11,7 @@ template.innerHTML = `
     <div><slot></slot></div>
 `;
 
-export default class BodySafe extends HTMLElement {
+export default class BodyLines extends HTMLElement {
     constructor() {
         super();
         this.root = this.attachShadow({mode: 'open'});
@@ -24,4 +24,4 @@ export default class BodySafe extends HTMLElement {
     }
 }
 
-customElements.define('comments-body', BodySafe);
+customElements.define('comments-body-lines', BodyLines);

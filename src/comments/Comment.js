@@ -1,8 +1,7 @@
 import Answer from './Answer.js';
 import Pagination from './Pagination.js';
 import Loading from './Loading.js';
-import './DateFormatted.js';
-import './BodySafe.js';
+import './BodyLines.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -54,11 +53,11 @@ template.innerHTML = `
     <div class="comment card mb-3">
     <div class="card-header">
         <span class="author"><slot name="author">author</slot></span>
-        <commnents-date class="createdAt"><slot name="createdAt">createdAt</slot></commnents-date>
+        <span class="createdAt"><slot name="createdAt">createdAt</slot></span>
         <a class="reply" href="#">Reply</a>
     </div>
     <div class="body card-body">
-        <comments-body><slot name="body">body</slot></comments-body>
+        <comments-body-lines><slot name="body">body</slot></comments-body-lines>
     </div>
     <div class="answers">
         <div class="container"></div>
@@ -107,11 +106,6 @@ export default class Comment extends HTMLElement {
             leaveAnswerDiv.style.display = 'block';
             leaveAnswer.focus();
         });
-    }
-
-    connectedCallback() {
-        const slot = this.root.querySelector('slot[name=createdAt]');
-        console.log('DATE.createdAt', slot);
     }
 
     showAnswer(data) {

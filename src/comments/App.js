@@ -4,6 +4,20 @@ import Loading from './Loading.js';
 import Pagination from "./Pagination.js";
 import LeaveMessage from './LeaveMessage.js';
 
+const formattedDate = time => new Date(parseInt(time * 1000)).toLocaleDateString();
+
+const formatComments = data => ({
+    ...data, comments: (data.comments || [])
+            .map(c => ({...c, createdAt: formattedDate(c.createdAt)}))
+            .map(formatAnswers)
+});
+
+const formatAnswers = data => ({
+    ...data, answers: (data.answers || []).map(formatAnswer)
+});
+
+const formatAnswer = a => ({...a, createdAt: formattedDate(a.createdAt)});
+
 const template = document.createElement('template');
 template.innerHTML = `
     <style>
@@ -60,6 +74,7 @@ export default class App extends HTMLElement {
         this.pagination.hide();
         this.loading.show();
         this.service.loadComments(next)
+                .then(formatComments)
                 .then(data => {
                     data.comments.forEach(this.showComment);
                     if (data.next) {
@@ -98,6 +113,7 @@ export default class App extends HTMLElement {
         comment.hidePagination();
         comment.showLoading();
         this.service.loadAnswers(next)
+                .then(formatAnswers)
                 .then(data => {
                     data.answers.forEach(comment.showAnswer);
                     if (data.next) {
@@ -114,7 +130,7 @@ export default class App extends HTMLElement {
         const createdAt = Math.round(new Date().getTime() / 1000);
         this.showComment({
             author: name,
-            createdAt,
+            createdAt: formattedDate(createdAt),
             body: message
         });
         this.service.leaveComment({name, message});
@@ -125,7 +141,7 @@ export default class App extends HTMLElement {
         const createdAt = Math.round(new Date().getTime() / 1000);
         comment.showAnswer({
             author: name,
-            createdAt,
+            createdAt: formattedDate(createdAt),
             body: message
         });
         this.service.leaveAnswer(commentId, {name, message});
