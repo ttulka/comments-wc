@@ -1,0 +1,54 @@
+{
+    "version": "1.0",
+    "href": "/api/comments/1",
+    "comments": [
+        {
+            "id": 6,
+            "body": "My test comment 6",
+            "createdAt": "1549648553",
+            "author": "Author 6",
+            "answers": [
+                {
+                    "id": 9,
+                    "body": "My test answer 9",
+                    "createdAt": "1668645553",
+                    "author": "Author 9"
+                }
+            ]
+        },      
+        {
+            "id": 5,
+            "body": "My test comment 5",
+            "createdAt": "1549645553",
+            "author": "Author 5",
+            "answers": [
+                {
+                    "id": 7,
+                    "body": "My test answer 7",
+                    "createdAt": "1549645553",
+                    "author": "Author 5"
+                },
+                {
+                    "id": 8,
+                    "body": "My test answer 8",
+                    "createdAt": "1559645553",
+                    "author": "Author 8"
+                },
+                {
+                    "id": 10,
+                    "body": "My test answer 10",
+                    "createdAt": "1559945553",
+                    "author": "Author 5"
+                }                
+            ],
+            "next": "server-5-1.json"
+        },
+        {
+            "id": 4,
+            "body": "My test comment 4",
+            "createdAt": "1549641553",
+            "author": "Author 4"
+        }
+    ],
+    "next": "server-1.json"
+}

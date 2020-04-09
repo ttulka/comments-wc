@@ -1,0 +1,25 @@
+{
+    "version": "1.0",
+    "href": "/api/comments/1/5/?page=1",
+    "answers": [
+        {
+            "id": 11,
+            "body": "My test answer 11",
+            "createdAt": "1559645553",
+            "author": "Author 5"
+        },
+        {
+            "id": 12,
+            "body": "My test answer 12",
+            "createdAt": "1569645553",
+            "author": "Author 12"
+        },
+        {
+            "id": 13,
+            "body": "My test answer 13",
+            "createdAt": "1579945553",
+            "author": "Author 7"
+        }                
+    ],
+    "next": "server-5-2.json"
+}

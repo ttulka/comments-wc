@@ -1,0 +1,12 @@
+{
+    "version": "1.0",
+    "href": "/api/comments/1/5/?page=2",
+    "answers": [
+        {
+            "id": 14,
+            "body": "My test answer 14",
+            "createdAt": "1589645553",
+            "author": "Author 14"
+        }               
+    ]
+}
