@@ -10,7 +10,7 @@ export default class CommentsService {
     }
 
     loadComments(next = 'server.json') {
-        console.log('calling service', this.serviceEndpoint + next)
+        console.log('calling service', this.serviceEndpoint + next);
         return wait(1000).then(() =>
             fetch(this.serviceEndpoint + next)
                 .then(data => data.json())
@@ -18,10 +18,20 @@ export default class CommentsService {
     }
 
     loadAnswers(next) {
-        console.log('calling service', this.serviceEndpoint + next)
+        console.log('calling service', this.serviceEndpoint + next);
         return wait(500).then(() =>
             fetch(this.serviceEndpoint + next)
                 .then(data => data.json())
         );
+    }
+
+    leaveComment({name, message}) {
+        console.log('calling service: leaveComment', name, message);
+        // TODO
+    }
+
+    leaveAnswer(commentId, {name, message}) {
+        console.log('calling service: leaveAnswer', commentId, name, message);
+        // TODO
     }
 }

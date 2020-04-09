@@ -32,12 +32,10 @@ export default class Loading extends HTMLElement {
     }
 
     show() {
-        console.log('loading show...');
         this.style.display = 'block';
     }
 
     hide() {
-        console.log('loading hide...');
         this.style.display = 'none';
     }
 }

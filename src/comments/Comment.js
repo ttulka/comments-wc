@@ -1,10 +1,15 @@
 import Answer from './Answer.js';
 import Pagination from './Pagination.js';
 import Loading from './Loading.js';
+import './DateFormatted.js';
+import './BodySafe.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
     <style>  
+    :host {
+        display: block;
+    }
     a {
         color: var(--primary, darkblue);
         text-decoration: none;
@@ -15,9 +20,6 @@ template.innerHTML = `
     }
     .createdAt {
         font-style: italic;
-    }
-    .body slot {
-        white-space: pre-line;
     }
     .reply {
         float: right;
@@ -44,18 +46,26 @@ template.innerHTML = `
     .card-body { 
         padding: 1.25rem;
     }    
+    .leave-answer {
+        padding: 1em;
+        padding-bottom: 0.5em;
+    }
     </style>
     <div class="comment card mb-3">
     <div class="card-header">
         <span class="author"><slot name="author">author</slot></span>
-        <span class="createdAt"><slot name="createdAt">createdAt</slot></span>
-        <a onclick="TODO" class="reply" href="#">Reply</a>
+        <commnents-date class="createdAt"><slot name="createdAt">createdAt</slot></commnents-date>
+        <a class="reply" href="#">Reply</a>
     </div>
     <div class="body card-body">
-        <slot name="body">body</slot>
+        <comments-body><slot name="body">body</slot></comments-body>
     </div>
     <div class="answers">
         <div class="container"></div>
+        <div class="navigation"></div>
+        <div class="leave-answer">
+            <comments-leave-message>Your answer</comments-leave-message>
+        </div>
     </div>
 `;
 
@@ -65,22 +75,43 @@ export default class Comment extends HTMLElement {
         this.root = this.attachShadow({mode: 'open'});
         this.root.appendChild(template.content.cloneNode(true));
 
-        this.answers = this.root.querySelector('.answers');
-        this.answersContainer = this.answers.querySelector('.container');
-        this.loading = new Loading();
-        this.loading.setAttribute('hide', 'true');
-        this.pagination = new Pagination();
-        this.pagination.addEventListener('pagination:next', () => this.dispatchEvent(new CustomEvent('comment:next-answers')));
-
-        this.answers.appendChild(this.loading);
-        this.answers.appendChild(this.pagination);
-
         this.dispatchEvent = this.dispatchEvent.bind(this);
         this.showAnswer = this.showAnswer.bind(this);
         this.showPagination = this.showPagination.bind(this);
         this.hidePagination = this.hidePagination.bind(this);
         this.showLoading = this.showLoading.bind(this);
         this.hideLoading = this.hideLoading.bind(this);
+
+        const answers = this.root.querySelector('.answers');
+        this.answersContainer = answers.querySelector('.container');
+
+        this.loading = new Loading();
+        this.loading.setAttribute('hide', 'true');
+
+        this.pagination = new Pagination();
+        this.pagination.addEventListener('pagination:next', e => this.dispatchEvent(new CustomEvent('comment:next-answers')));
+
+        const answersNavigation = answers.querySelector('.navigation');
+        answersNavigation.appendChild(this.loading);
+        answersNavigation.appendChild(this.pagination);
+
+        const leaveAnswer = answers.querySelector('comments-leave-message');
+        leaveAnswer.addEventListener('leave-message:submit', e => this.dispatchEvent(new CustomEvent('comment:leave-answer', e)));
+
+        const leaveAnswerDiv = answers.querySelector('.leave-answer');
+        leaveAnswerDiv.style.display = 'none';
+
+        const reply = this.root.querySelector('.reply');
+        reply.addEventListener('click', e => {
+            e.preventDefault();
+            leaveAnswerDiv.style.display = 'block';
+            leaveAnswer.focus();
+        });
+    }
+
+    connectedCallback() {
+        const slot = this.root.querySelector('slot[name=createdAt]');
+        console.log('DATE.createdAt', slot);
     }
 
     showAnswer(data) {

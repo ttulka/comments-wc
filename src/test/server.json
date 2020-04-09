@@ -4,13 +4,13 @@
     "comments": [
         {
             "id": 6,
-            "body": "My test comment 6",
+            "body": "My test comment 6 with a http://link.com",
             "createdAt": "1549648553",
             "author": "Author 6",
             "answers": [
                 {
                     "id": 9,
-                    "body": "My test answer 9",
+                    "body": "My test answer 9\nwith a new line",
                     "createdAt": "1668645553",
                     "author": "Author 9"
                 }
@@ -18,7 +18,7 @@
         },      
         {
             "id": 5,
-            "body": "My test comment 5",
+            "body": "My test comment 5\nwith a new line.",
             "createdAt": "1549645553",
             "author": "Author 5",
             "answers": [
@@ -45,7 +45,7 @@
         },
         {
             "id": 4,
-            "body": "My test comment 4",
+            "body": "My test comment 4 with &copy; <b>HTML</b> <h1>Tags</h1>.",
             "createdAt": "1549641553",
             "author": "Author 4"
         }

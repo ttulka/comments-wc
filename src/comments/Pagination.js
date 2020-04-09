@@ -39,16 +39,16 @@ export default class Pagination extends HTMLElement {
         this.root = this.attachShadow({mode: 'open'});
         this.root.appendChild(template.content.cloneNode(true));
 
+        this.dispatchEvent = this.dispatchEvent.bind(this);
+        this.show = this.show.bind(this);
+        this.hide = this.hide.bind(this);
+
         const link = this.root.querySelector('a');
         link.innerText = label;
         link.addEventListener('click', e => {
             e.preventDefault();
             this.dispatchEvent(new CustomEvent('pagination:next'));
         });
-
-        this.dispatchEvent = this.dispatchEvent.bind(this);
-        this.show = this.show.bind(this);
-        this.hide = this.hide.bind(this);
     }
 
     show() {
