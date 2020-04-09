@@ -3,6 +3,7 @@ import Comment from './Comment.js';
 import Loading from './Loading.js';
 import Pagination from "./Pagination.js";
 import LeaveMessage from './LeaveMessage.js';
+import ListenersHolder from '../common/ListenersHolder.js';
 
 const formattedDate = time => new Date(parseInt(time * 1000)).toLocaleDateString();
 
@@ -45,7 +46,6 @@ export default class App extends HTMLElement {
         this.loadAnswers = this.loadAnswers.bind(this);
         this.leaveComment = this.leaveComment.bind(this);
         this.leaveAnswer = this.leaveAnswer.bind(this);
-        this._addListener = this._addListener.bind(this);
 
         this.service = new CommentsService(this.getAttribute('service'));
 
@@ -63,17 +63,17 @@ export default class App extends HTMLElement {
         this.comments.appendChild(this.loading);
         this.comments.appendChild(this.pagination);
 
-        this._listeners = [];
+        this._listeners = new ListenersHolder();
     }
 
     connectedCallback() {
-        this._addListener(this.leaveMessage, 'leave-message:submit', ({detail}) => this.leaveComment(detail));
-        this._addListener(this.pagination, 'pagination:next', e => this.nextCommentsListener.handle());
+        this._listeners.addListener(this.leaveMessage, 'leave-message:submit', ({detail}) => this.leaveComment(detail));
+        this._listeners.addListener(this.pagination, 'pagination:next', e => this.nextCommentsListener.handle());
         this.loadComments();
     }
 
     disconnectedCallback() {
-        this._listeners.forEach(({name, listener, el}) => el.removeEventListener(name, listener));
+        this._listeners.removeAllListeners();
     }
 
     loadComments(next) {
@@ -99,7 +99,7 @@ export default class App extends HTMLElement {
             <span slot="createdAt">${data.createdAt}</span>
             <span slot="body">${data.body}</span>
         `;
-        this._addListener(comment, 'comment:leave-answer', ({detail}) => this.leaveAnswer(data.id, detail, comment));
+        this._listeners.addListener(comment, 'comment:leave-answer', ({detail}) => this.leaveAnswer(data.id, detail, comment));
 
         if (data.answers) {
             data.answers.forEach(comment.showAnswer);
@@ -107,7 +107,7 @@ export default class App extends HTMLElement {
         if (data.next) {
             const nextAnswersListeners = e => this.loadAnswers(comment, data.next);
             this.nextAnswersListeners[comment.id] = { handle: nextAnswersListeners};
-            this._addListener(comment, 'comment:next-answers', e => this.nextAnswersListeners[comment.id].handle());
+            this._listeners.addListener(comment, 'comment:next-answers', e => this.nextAnswersListeners[comment.id].handle());
 
             comment.showPagination();
         } else {
@@ -153,11 +153,6 @@ export default class App extends HTMLElement {
             body: message
         });
         this.service.leaveAnswer(commentId, {name, message});
-    }
-
-    _addListener(el, name, listener) {
-        el.addEventListener(name, listener);
-        this._listeners.push({el, name, listener});
     }
 }
 

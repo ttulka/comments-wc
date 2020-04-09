@@ -1,4 +1,5 @@
 import Captcha from './Captcha.js';
+import ListenersHolder from '../common/ListenersHolder.js';
 
 const THANKS_FOR_MESSAGE = 'Thanks for your message!';
 const WRONG_CAPTCHA = 'Captcha does not match!';
@@ -148,17 +149,19 @@ export default class LeaveMessage extends HTMLElement {
         this.name = this.form.querySelector('input[name=name]');
         this.captcha = this.form.querySelector('input[name=captcha]');
         this.message = this.form.querySelector('textarea[name=message]');
+
+        this._listeners = new ListenersHolder();
     }
 
     connectedCallback() {
+        this._listeners.addListener(this.form, 'submit', this.submitListener);
+        this._listeners.addListener(this.captchaCanvas,'click', this.reloadCaptcha);
+
         this.reloadCaptcha();
-        this.form.addEventListener('submit', this.submitListener);
-        this.captchaCanvas.addEventListener('click', this.reloadCaptcha);
     }
 
     disconnectedCallback() {
-        this.form.removeEventListener('submit', this.submitListener);
-        this.captchaCanvas.removeEventListener('click', this.reloadCaptcha);
+        this._listeners.removeAllListeners();
     }
 
     onFormSubmit() {
@@ -187,6 +190,7 @@ export default class LeaveMessage extends HTMLElement {
         if (captcha.toUpperCase() !== this.captchaFn.getCode().toUpperCase()) {
             this.showError(WRONG_CAPTCHA);
             this.captcha.classList.add('error');
+            this.reloadCaptcha();
             hasError = true;
         }
         if (hasError) {
@@ -197,6 +201,7 @@ export default class LeaveMessage extends HTMLElement {
         this.name.value = '';
         this.captcha.value = '';
         this.message.value = '';
+        this.reloadCaptcha();
         this.showSuccess(THANKS_FOR_MESSAGE);
     }
 

@@ -1,3 +1,5 @@
+import ListenersHolder from '../common/ListenersHolder.js';
+
 const template = document.createElement('template');
 template.innerHTML = `
     <style>  
@@ -43,12 +45,21 @@ export default class Pagination extends HTMLElement {
         this.show = this.show.bind(this);
         this.hide = this.hide.bind(this);
 
-        const link = this.root.querySelector('a');
-        link.innerText = label;
-        link.addEventListener('click', e => {
+        this.link = this.root.querySelector('a');
+        this.link.innerText = label;
+
+        this._listeners = new ListenersHolder();
+    }
+
+    connectedCallback() {
+        this._listeners.addListener(this.link,'click', e => {
             e.preventDefault();
             this.dispatchEvent(new CustomEvent('pagination:next'));
         });
+    }
+
+    disconnectedCallback() {
+        this._listeners.removeAllListeners();
     }
 
     show() {

@@ -2,6 +2,7 @@ import Answer from './Answer.js';
 import Pagination from './Pagination.js';
 import Loading from './Loading.js';
 import './BodyLines.js';
+import ListenersHolder from '../common/ListenersHolder.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -62,7 +63,7 @@ template.innerHTML = `
     <div class="answers">
         <div class="container"></div>
         <div class="navigation"></div>
-        <div class="leave-answer">
+        <div class="leave-answer" style="display: none">
             <comments-leave-message>Your answer</comments-leave-message>
         </div>
     </div>
@@ -88,24 +89,29 @@ export default class Comment extends HTMLElement {
         this.loading.setAttribute('hide', 'true');
 
         this.pagination = new Pagination();
-        this.pagination.addEventListener('pagination:next', e => this.dispatchEvent(new CustomEvent('comment:next-answers')));
+        this.leaveAnswer = answers.querySelector('comments-leave-message');
+        this.leaveAnswerDiv = answers.querySelector('.leave-answer');
+        this.reply = this.root.querySelector('.reply');
 
         const answersNavigation = answers.querySelector('.navigation');
         answersNavigation.appendChild(this.loading);
         answersNavigation.appendChild(this.pagination);
 
-        const leaveAnswer = answers.querySelector('comments-leave-message');
-        leaveAnswer.addEventListener('leave-message:submit', e => this.dispatchEvent(new CustomEvent('comment:leave-answer', e)));
+        this._listeners = new ListenersHolder();
+    }
 
-        const leaveAnswerDiv = answers.querySelector('.leave-answer');
-        leaveAnswerDiv.style.display = 'none';
-
-        const reply = this.root.querySelector('.reply');
-        reply.addEventListener('click', e => {
+    connectedCallback() {
+        this._listeners.addListener(this.pagination, 'pagination:next', e => this.dispatchEvent(new CustomEvent('comment:next-answers')));
+        this._listeners.addListener(this.leaveAnswer, 'leave-message:submit', e => this.dispatchEvent(new CustomEvent('comment:leave-answer', e)));
+        this._listeners.addListener(this.reply, 'click', e => {
             e.preventDefault();
-            leaveAnswerDiv.style.display = 'block';
-            leaveAnswer.focus();
+            this.leaveAnswerDiv.style.display = 'block';
+            this.leaveAnswer.focus();
         });
+    }
+
+    disconnectedCallback() {
+        this._listeners.removeAllListeners();
     }
 
     showAnswer(data) {
