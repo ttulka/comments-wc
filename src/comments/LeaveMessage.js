@@ -1,6 +1,5 @@
-const success_msg_def = 'Thanks for your message!';
-const error_msg = 'Server error. Please try it again.';
-const captcha_msg = 'Captcha does not match!';
+const THANKS_FOR_MESSAGE = 'Thanks for your message!';
+const WRONG_CAPTCHA = 'Captcha does not match!';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -76,11 +75,28 @@ template.innerHTML = `
         font-size: 1.5em;
         margin-bottom: 0.5em;
     }
+    .alert {
+        position: relative;
+        padding: .75rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: .25rem;
+    }
+    .alert.success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+    .alert.error {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
     </style>
     <div class="title"><slot>Leave a comment</slot></div>
     <form method="post">
-        <div class="alert error"></div>
-        <div class="alert info"></div>
+        <div class="alert error" style="display: none"></div>
+        <div class="alert success" style="display: none"></div>
         <div class="form-row flex">
             <div>
                 <input name="name" maxLength="50" placeholder="Name"/>
@@ -113,10 +129,15 @@ export default class LeaveMessage extends HTMLElement {
 
         this.dispatchEvent = this.dispatchEvent.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
+        this.showSuccess = this.showSuccess.bind(this);
+        this.showError = this.showError.bind(this);
         this.focus = this.focus.bind(this);
 
         const form = this.root.querySelector('form');
         form.addEventListener('submit', e => e.preventDefault() & this.onFormSubmit());
+
+        this.error = this.root.querySelector('.alert.error');
+        this.success = this.root.querySelector('.alert.success');
 
         this.name = form.querySelector('input[name=name]');
         this.captcha = form.querySelector('input[name=captcha]');
@@ -154,6 +175,21 @@ export default class LeaveMessage extends HTMLElement {
         this.name.value = '';
         this.captcha.value = '';
         this.message.value = '';
+        this.showSuccess(THANKS_FOR_MESSAGE);
+    }
+
+    showSuccess(msg) {
+        this.error.style.display = 'none';
+        this.success.innerHTML = msg;
+        this.success.style.display = 'block';
+        setTimeout(() => (this.success.style.display = 'none'), 3000);
+    }
+
+    showError(msg) {
+        this.success.style.display = 'none';
+        this.error.innerHTML = msg;
+        this.error.style.display = 'block';
+        setTimeout(() => (this.error.style.display = 'none'), 3000);
     }
 
     focus() {
