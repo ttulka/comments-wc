@@ -4,7 +4,7 @@ const template = document.createElement('template');
 template.innerHTML = `
     <style>  
     a {
-        color: var(--primary, darkblue);
+        color: var(--primary, mediumblue);
         text-decoration: none;
     }
     ul {

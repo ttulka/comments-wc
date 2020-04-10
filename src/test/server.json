@@ -10,7 +10,7 @@
             "answers": [
                 {
                     "id": 9,
-                    "body": "My test answer 9\nwith a new line",
+                    "body": "My test answer 9\nwith a <h2>new</h2> line",
                     "createdAt": "1668645553",
                     "author": "Author 9"
                 }

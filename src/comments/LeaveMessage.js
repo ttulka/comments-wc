@@ -25,7 +25,7 @@ template.innerHTML = `
         box-sizing: border-box;
     }
     input.error , textarea.error {
-        border: 1px solid red;
+        border: 1px solid var(--red, red);
     }
     @media (min-width: 24em) {
         .form-row.flex {
@@ -45,8 +45,8 @@ template.innerHTML = `
         -webkit-appearance: button;
         cursor: pointer;   
         color: #fff;
-        background-color: var(--primary, darkblue);
-        border-color: var(--primary, darkblue);        
+        background-color: var(--primary, mediumblue);
+        border-color: var(--primary, mediumblue);        
         margin-bottom: .5rem!important;
         display: inline-block;
         font-weight: normal;
@@ -86,14 +86,14 @@ template.innerHTML = `
         border-radius: .25rem;
     }
     .alert.success {
-        color: #155724;
+        color: var(--green, green);
         background-color: #d4edda;
-        border-color: #c3e6cb;
+        border-color: var(--green, green);
     }
     .alert.error {
-        color: #721c24;
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
+        color: var(--red, red);
+        background-color: #ffe6e6;
+        border-color: var(--red, red);
     }
     </style>
     <div class="title"><slot>Leave a comment</slot></div>
@@ -165,9 +165,10 @@ export default class LeaveMessage extends HTMLElement {
     }
 
     onFormSubmit() {
-        const name = this.name.value.trim();
+        const name = this.name.value.trim().substring(0, 50);
+        const message = this.message.value.trim().substring(0, 1000);
         const captcha = this.captcha.value.trim();
-        const message = this.message.value.trim();
+        console.log('NAME', this.name.value, name);
 
         this.name.classList.remove('error');
         this.captcha.classList.remove('error');
@@ -190,6 +191,7 @@ export default class LeaveMessage extends HTMLElement {
         if (captcha.toUpperCase() !== this.captchaFn.getCode().toUpperCase()) {
             this.showError(WRONG_CAPTCHA);
             this.captcha.classList.add('error');
+            this.captcha.value = '';
             this.reloadCaptcha();
             hasError = true;
         }

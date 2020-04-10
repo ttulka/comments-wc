@@ -4,8 +4,6 @@ function wait(ms) {
     })
 }
 
-
-
 export default class CommentsService {
     constructor(serviceEndpoint) {
         this.serviceEndpoint = serviceEndpoint.endsWith('/') ? serviceEndpoint : serviceEndpoint + '/';

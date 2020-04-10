@@ -1,9 +1,10 @@
-import CommentsService from './service/CommentsService.js'
+import CommentsService from './service/CommentsServiceDev.js'
 import Comment from './Comment.js';
 import Loading from './Loading.js';
 import Pagination from "./Pagination.js";
 import LeaveMessage from './LeaveMessage.js';
 import ListenersHolder from '../common/ListenersHolder.js';
+import safeText from '../common/safeText.js';
 
 const formattedDate = time => new Date(parseInt(time * 1000)).toLocaleDateString();
 
@@ -95,9 +96,9 @@ export default class App extends HTMLElement {
     showComment(data) {
         const comment = new Comment();
         comment.innerHTML = `
-            <span slot="author">${data.author}</span>
-            <span slot="createdAt">${data.createdAt}</span>
-            <span slot="body">${data.body}</span>
+            <span slot="author">${safeText(data.author)}</span>
+            <span slot="createdAt">${safeText(data.createdAt)}</span>
+            <span slot="body">${safeText(data.body)}</span>
         `;
         this._listeners.addListener(comment, 'comment:leave-answer', ({detail}) => this.leaveAnswer(data.id, detail, comment));
 
