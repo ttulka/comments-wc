@@ -1,8 +1,11 @@
 import Captcha from './Captcha.js';
 import ListenersHolder from '../common/ListenersHolder.js';
 
-const THANKS_FOR_MESSAGE = 'Thanks for your message!';
-const WRONG_CAPTCHA = 'Captcha does not match!';
+const MAX_CHARS = 1000;
+
+const THANKS_FOR_MESSAGE = `Thanks for your message!`;
+const WRONG_CAPTCHA = `Captcha doesn't seem to match`;
+const MAX_CHARS_EXCEEDED = `Only ${MAX_CHARS} characters please.`;
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -115,7 +118,7 @@ template.innerHTML = `
         </div>
         <div class="form-row">
             <div>
-                <textarea name="message" rows="5" maxLength="1000"></textarea>
+                <textarea name="message" rows="5" maxLength="${MAX_CHARS}"></textarea>
             </div>
         </div>
         <div class="form-row">
@@ -132,8 +135,10 @@ export default class LeaveMessage extends HTMLElement {
         this.dispatchEvent = this.dispatchEvent.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.reloadCaptcha = this.reloadCaptcha.bind(this);
+        this.checkMaxChars = this.checkMaxChars.bind(this);
         this.showSuccess = this.showSuccess.bind(this);
         this.showError = this.showError.bind(this);
+        this.cleanAlert = this.cleanAlert.bind(this);
         this.focus = this.focus.bind(this);
 
         this.captchaFn = new Captcha();
@@ -155,6 +160,7 @@ export default class LeaveMessage extends HTMLElement {
     connectedCallback() {
         this._listeners.addListener(this.form, 'submit', this.submitListener);
         this._listeners.addListener(this.captchaCanvas,'click', this.reloadCaptcha);
+        this._listeners.addListener(this.message,'keyup', this.checkMaxChars);
 
         this.reloadCaptcha();
     }
@@ -205,21 +211,33 @@ export default class LeaveMessage extends HTMLElement {
         this.showSuccess(THANKS_FOR_MESSAGE);
     }
 
+    checkMaxChars() {
+        this.cleanAlert();
+        if (this.message.value.length >= MAX_CHARS) {
+            this.showError(MAX_CHARS_EXCEEDED);
+        }
+    }
+
     reloadCaptcha() {
         this.captchaFn.create(this.captchaCanvas);
     }
 
     showSuccess(msg) {
-        this.error.style.display = 'none';
+        this.cleanAlert();
         this.success.innerHTML = msg;
         this.success.style.display = 'block';
         setTimeout(() => (this.success.style.display = 'none'), 3000);
     }
 
     showError(msg) {
-        this.success.style.display = 'none';
+        this.cleanAlert();
         this.error.innerHTML = msg;
         this.error.style.display = 'block';
+    }
+
+    cleanAlert() {
+        this.error.style.display = 'none';
+        this.success.style.display = 'none';
     }
 
     focus() {
