@@ -6,20 +6,6 @@ import LeaveMessage from './LeaveMessage.js';
 import ListenersHolder from '../common/ListenersHolder.js';
 import safeText from '../common/safeText.js';
 
-const formattedDate = time => new Date(parseInt(time * 1000)).toLocaleDateString();
-
-const formatComments = data => ({
-    ...data, comments: (data.comments || [])
-            .map(c => ({...c, createdAt: formattedDate(c.createdAt)}))
-            .map(formatAnswers)
-});
-
-const formatAnswers = data => ({
-    ...data, answers: (data.answers || []).map(formatAnswer)
-});
-
-const formatAnswer = a => ({...a, createdAt: formattedDate(a.createdAt)});
-
 const template = document.createElement('template');
 template.innerHTML = `
     <style>
@@ -141,7 +127,7 @@ export default class App extends HTMLElement {
             createdAt: formattedDate(createdAt),
             body: message
         });
-        this.service.leaveComment({name, message});
+        this.service.saveComment({name, message});
     }
 
     leaveAnswer(commentId, {name, message}, comment) {
@@ -152,7 +138,26 @@ export default class App extends HTMLElement {
             createdAt: formattedDate(createdAt),
             body: message
         });
-        this.service.leaveAnswer(commentId, {name, message});
+        this.service.saveAnswer(commentId, {name, message});
     }
 }
 customElements.define('comments-app', App);
+
+function formattedDate(time) {
+    return new Date(parseInt(time * 1000)).toLocaleDateString();
+}
+
+function formatComments(data) {
+    return ({...data, comments: (data.comments || [])
+                .map(c => ({...c, createdAt: formattedDate(c.createdAt)}))
+                .map(formatAnswers)
+    });
+}
+
+function formatAnswers(data) {
+    return ({...data, answers: (data.answers || []).map(formatAnswer)});
+}
+
+function formatAnswer(answer) {
+    return ({...answer, createdAt: formattedDate(answer.createdAt)});
+}
