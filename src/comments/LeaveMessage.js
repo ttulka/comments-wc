@@ -107,7 +107,7 @@ template.innerHTML = `
         </div>
         <div class="form-row flex">
             <div>
-                <input name="captcha" maxLength="10" placeholder="Captcha"/>
+                <input name="captcha" maxLength="10" placeholder="Captcha" autocomplete="off"/>
             </div>
             <div class="captcha">
                 <canvas id="captcha" width="170" height="60"></canvas>

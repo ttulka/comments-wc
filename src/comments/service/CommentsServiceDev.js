@@ -5,7 +5,7 @@ function wait(ms) {
 }
 
 export default class CommentsService {
-    constructor(serviceEndpoint) {
+    constructor(serviceEndpoint = '/', postId) {
         this.serviceEndpoint = serviceEndpoint.endsWith('/') ? serviceEndpoint : serviceEndpoint + '/';
     }
 
@@ -26,13 +26,17 @@ export default class CommentsService {
         );
     }
 
-    leaveComment({name, message}) {
+    saveComment({name, message}) {
         console.log('calling service: leaveComment', name, message);
-        // TODO
+        return Promise.resolve({
+            author: name, body: message, createdAt: new Date().getTime()
+        });
     }
 
-    leaveAnswer(commentId, {name, message}) {
+    saveAnswer(commentId, {name, message}) {
         console.log('calling service: leaveAnswer', commentId, name, message);
-        // TODO
+        return Promise.resolve({
+           author: name, body: message, createdAt: new Date().getTime()
+       });
     }
 }

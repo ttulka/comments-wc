@@ -1,8 +1,8 @@
-import CommentsService from './service/CommentsServiceDev.js'
 import Comment from './Comment.js';
 import Loading from './Loading.js';
 import Pagination from "./Pagination.js";
 import LeaveMessage from './LeaveMessage.js';
+import CommentsService from './service/CommentsServiceDev.js'
 import ListenersHolder from '../common/ListenersHolder.js';
 import safeText from '../common/safeText.js';
 
@@ -33,7 +33,7 @@ export default class App extends HTMLElement {
         this.leaveComment = this.leaveComment.bind(this);
         this.leaveAnswer = this.leaveAnswer.bind(this);
 
-        this.service = new CommentsService(this.getAttribute('service'));
+        this.service = new CommentsService(this.getAttribute('service'), this.getAttribute('postId'));
 
         this.comments = this.root.querySelector('.comments');
         this.commentsContainer = this.comments.querySelector('.container');
@@ -69,7 +69,7 @@ export default class App extends HTMLElement {
         this.service.loadComments(next)
                 .then(formatComments)
                 .then(data => {
-                    data.comments.forEach(this.showComment);
+                    data.comments.forEach(d => this.showComment(d, false));
                     if (data.next) {
                         this.pagination.show();
                         this.nextCommentsListener.handle = () => this.loadComments(data.next);
@@ -78,7 +78,7 @@ export default class App extends HTMLElement {
                 .finally(this.loading.hide);
     }
 
-    showComment(data) {
+    showComment(data, first = false) {
         const comment = new Comment();
         comment.innerHTML = `
             <span slot="author">${safeText(data.author)}</span>
@@ -99,7 +99,11 @@ export default class App extends HTMLElement {
         } else {
             comment.hidePagination();
         }
-        this.commentsContainer.appendChild(comment);
+        if (first) {
+            this.commentsContainer.insertBefore(comment, this.commentsContainer.firstChild)
+        } else {
+            this.commentsContainer.appendChild(comment);
+        }
     }
 
     loadAnswers(comment, next) {
@@ -121,43 +125,32 @@ export default class App extends HTMLElement {
 
     leaveComment({name, message}) {
         console.log('leaveComment:', name, message);
-        const createdAt = Math.round(new Date().getTime() / 1000);
-        this.showComment({
-            author: name,
-            createdAt: formattedDate(createdAt),
-            body: message
-        });
-        this.service.saveComment({name, message});
+        this.service.saveComment({name, message})
+                .then(formatComment)
+                .then(data => this.showComment(data, true));
     }
 
     leaveAnswer(commentId, {name, message}, comment) {
         console.log('leaveAnswer:', commentId, name, message);
-        const createdAt = Math.round(new Date().getTime() / 1000);
-        comment.showAnswer({
-            author: name,
-            createdAt: formattedDate(createdAt),
-            body: message
-        });
-        this.service.saveAnswer(commentId, {name, message});
+        this.service.saveAnswer(commentId, {name, message})
+                .then(formatComment)
+                .then(comment.showAnswer);
     }
 }
 customElements.define('comments-app', App);
 
-function formattedDate(time) {
-    return new Date(parseInt(time * 1000)).toLocaleDateString();
+function formatComments(data) {
+    return ({...data, comments: (data.comments || []).map(formatComment).map(formatAnswers)});
 }
 
-function formatComments(data) {
-    return ({...data, comments: (data.comments || [])
-                .map(c => ({...c, createdAt: formattedDate(c.createdAt)}))
-                .map(formatAnswers)
-    });
+function formatComment(comment) {
+    return ({...comment, createdAt: formatDate(comment.createdAt)})
 }
 
 function formatAnswers(data) {
-    return ({...data, answers: (data.answers || []).map(formatAnswer)});
+    return ({...data, answers: (data.answers || []).map(formatComment)});
 }
 
-function formatAnswer(answer) {
-    return ({...answer, createdAt: formattedDate(answer.createdAt)});
+function formatDate(time) {
+    return new Date(parseInt(time * 1000)).toLocaleDateString();
 }
