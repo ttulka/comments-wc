@@ -4,13 +4,13 @@
     "comments": [
         {
             "id": 6,
-            "body": "My test comment 6 with a http://link.com",
+            "body": "My test comment 6 with a http://link.com and https://www.another.org/123/_12-55/?a=1&b=2#aaa",
             "createdAt": "1549648553",
             "author": "Author 6",
             "answers": [
                 {
                     "id": 9,
-                    "body": "My test answer 9\nwith a <h2>new</h2> line",
+                    "body": "My test answer 9\nwith a <h2>new</h2> line and http://link.de",
                     "createdAt": "1668645553",
                     "author": "Author 9"
                 }
@@ -18,13 +18,13 @@
         },      
         {
             "id": 5,
-            "body": "My test comment 5\nwith a new line.",
+            "body": "My test comment 5\nwith a new line.\n<a href=\"http://www.xyz.com\">xyz</a>",
             "createdAt": "1549645553",
             "author": "Author 5",
             "answers": [
                 {
                     "id": 7,
-                    "body": "My test answer 7",
+                    "body": "My test answer 7\n<script>alert(1)</script>",
                     "createdAt": "1549645553",
                     "author": "Author 5"
                 },

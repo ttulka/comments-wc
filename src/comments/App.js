@@ -5,12 +5,17 @@ import LeaveMessage from './LeaveMessage.js';
 import CommentsService from './service/CommentsService.js'
 import ListenersHolder from '../common/ListenersHolder.js';
 import safeText from '../common/safeText.js';
+import linkify from '../common/linkify.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
     <style>
     :host {
         display: block;
+    }
+    a {
+        color: var(--primary, mediumblue);
+        text-decoration: none;
     }
     comments-leave-message {
         margin-bottom: 2em;
@@ -82,7 +87,7 @@ export default class App extends HTMLElement {
         comment.innerHTML = `
             <span slot="author">${safeText(data.author)}</span>
             <span slot="createdAt">${safeText(data.createdAt)}</span>
-            <span slot="body">${safeText(data.body)}</span>
+            <span slot="body">${linkify(safeText(data.body))}</span>
         `;
         this._listeners.addListener(comment, 'comment:leave-answer', ({detail}) => this.leaveAnswer(data.id, detail, comment));
 
