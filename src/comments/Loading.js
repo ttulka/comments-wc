@@ -14,7 +14,6 @@ template.innerHTML = `
     </style>
     <div class="loading"></div>
 `;
-
 export default class Loading extends HTMLElement {
     constructor() {
         super();
@@ -39,5 +38,4 @@ export default class Loading extends HTMLElement {
         this.style.display = 'none';
     }
 }
-
 customElements.define('comments-loading', Loading);

@@ -69,7 +69,6 @@ template.innerHTML = `
         </div>
     </div>
 `;
-
 export default class Comment extends HTMLElement {
     constructor() {
         super();
@@ -141,5 +140,4 @@ export default class Comment extends HTMLElement {
         this.loading.hide();
     }
 }
-
 customElements.define('comments-comment', Comment);

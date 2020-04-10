@@ -123,7 +123,6 @@ template.innerHTML = `
         </div>
     </form>
 `;
-
 export default class LeaveMessage extends HTMLElement {
     constructor() {
         super();
@@ -228,5 +227,4 @@ export default class LeaveMessage extends HTMLElement {
         this.name.focus();
     }
 }
-
 customElements.define('comments-leave-message', LeaveMessage);

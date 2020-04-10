@@ -10,7 +10,6 @@ template.innerHTML = `
     </style>
     <div><slot></slot></div>
 `;
-
 export default class BodyLines extends HTMLElement {
     constructor() {
         super();
@@ -22,5 +21,4 @@ export default class BodyLines extends HTMLElement {
         const slot = this.shadowRoot.querySelector('slot');
     }
 }
-
 customElements.define('comments-body-lines', BodyLines);

@@ -1,6 +1,6 @@
 export default class Captcha {
     constructor() {
-        this.code = null;
+        this.code = '';
     }
 
     getCode() {

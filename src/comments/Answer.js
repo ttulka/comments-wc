@@ -29,7 +29,6 @@ template.innerHTML = `
         </div>
     </div>
 `;
-
 export default class Answer extends HTMLElement {
     constructor() {
         super();
@@ -37,5 +36,4 @@ export default class Answer extends HTMLElement {
         this.root.appendChild(template.content.cloneNode(true));
     }
 }
-
 customElements.define('comments-answer', Answer);

@@ -34,7 +34,6 @@ template.innerHTML = `
         </ul>
     </nav>
 `;
-
 export default class Pagination extends HTMLElement {
     constructor(label = 'Load more...') {
         super();
@@ -70,5 +69,4 @@ export default class Pagination extends HTMLElement {
         this.style.display = 'none';
     }
 }
-
 customElements.define('comments-pagination', Pagination);

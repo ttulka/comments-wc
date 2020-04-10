@@ -35,7 +35,6 @@ template.innerHTML = `
         <div class="container"></div>    
     </div>    
 `;
-
 export default class App extends HTMLElement {
     constructor() {
         super();
@@ -156,5 +155,4 @@ export default class App extends HTMLElement {
         this.service.leaveAnswer(commentId, {name, message});
     }
 }
-
 customElements.define('comments-app', App);
