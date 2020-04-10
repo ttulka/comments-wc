@@ -2,7 +2,7 @@ import Comment from './Comment.js';
 import Loading from './Loading.js';
 import Pagination from "./Pagination.js";
 import LeaveMessage from './LeaveMessage.js';
-import CommentsService from './service/CommentsServiceDev.js'
+import CommentsService from './service/CommentsService.js'
 import ListenersHolder from '../common/ListenersHolder.js';
 import safeText from '../common/safeText.js';
 
@@ -63,7 +63,6 @@ export default class App extends HTMLElement {
     }
 
     loadComments(next) {
-        console.log('loadComments:', next);
         this.pagination.hide();
         this.loading.show();
         this.service.loadComments(next)
@@ -107,7 +106,6 @@ export default class App extends HTMLElement {
     }
 
     loadAnswers(comment, next) {
-        console.log('loadAnswers:', next);
         comment.hidePagination();
         comment.showLoading();
         this.service.loadAnswers(next)
@@ -115,7 +113,6 @@ export default class App extends HTMLElement {
                 .then(data => {
                     data.answers.forEach(comment.showAnswer);
                     if (data.next) {
-                        console.log('NEXT ANSWERS will be', data.next);
                         this.nextAnswersListeners[comment.id].handle = () => this.loadAnswers(comment, data.next);
                         comment.showPagination();
                     }
@@ -124,14 +121,12 @@ export default class App extends HTMLElement {
     }
 
     leaveComment({name, message}) {
-        console.log('leaveComment:', name, message);
         this.service.saveComment({name, message})
                 .then(formatComment)
                 .then(data => this.showComment(data, true));
     }
 
     leaveAnswer(commentId, {name, message}, comment) {
-        console.log('leaveAnswer:', commentId, name, message);
         this.service.saveAnswer(commentId, {name, message})
                 .then(formatComment)
                 .then(comment.showAnswer);

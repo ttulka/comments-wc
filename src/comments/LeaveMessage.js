@@ -167,7 +167,6 @@ export default class LeaveMessage extends HTMLElement {
         const name = this.name.value.trim().substring(0, 50);
         const message = this.message.value.trim().substring(0, 1000);
         const captcha = this.captcha.value.trim();
-        console.log('NAME', this.name.value, name);
 
         this.name.classList.remove('error');
         this.captcha.classList.remove('error');

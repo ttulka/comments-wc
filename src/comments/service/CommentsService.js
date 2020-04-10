@@ -27,7 +27,6 @@ export default class CommentsService {
             body: formUrlEncoded({body: message, author: name})
         })
                 .then(data => data.json())
-                .then(d => {console.log('RETURNED COMMENT', d); return d;})
                 .catch(err => console.error('Cannot save an comment:', err));
     }
 
