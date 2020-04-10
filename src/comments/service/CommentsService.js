@@ -1,26 +1,26 @@
 export default class CommentsService {
     constructor(serviceEndpoint = '/', postId) {
-        this.serviceEndpoint = serviceEndpoint.endsWith('/') ? serviceEndpoint : serviceEndpoint + '/';
-        this.commentsHref = `${this.serviceEndpoint}post/${postId}/comments/`;
+        this.serviceEndpoint = serviceEndpoint;
+        this.commentsHref = `post/${postId}/comments`;
     }
 
-    loadComments(href = '') {
-        console.debug('Calling service for comments', this.commentsHref + href);
-        return fetch(this.commentsHref + href)
+    loadComments(href = this.commentsHref) {
+        console.debug('Calling service for comments', new URL(href, this.serviceEndpoint));
+        return fetch(new URL(href, this.serviceEndpoint).href)
                 .then(data => data.json())
                 .catch(err => console.error('Cannot load comments:', err));
     }
 
     loadAnswers(href) {
-        console.debug('Calling service for answers', this.commentsHref + href);
-        return fetch(this.commentsHref + href)
+        console.debug('Calling service for answers', new URL(href, this.serviceEndpoint));
+        return fetch(new URL(href, this.serviceEndpoint).href)
                 .then(data => data.json())
                 .catch(err => console.error('Cannot load answers:', err));
     }
 
     saveComment({name, message}) {
-        console.debug('Calling service for saving a comment', this.commentsHref);
-        return fetch(this.commentsHref, {
+        console.debug('Calling service for saving a comment', new URL(this.commentsHref, this.serviceEndpoint));
+        return fetch(new URL(this.commentsHref, this.serviceEndpoint).href, {
             method: 'POST',
             cache: 'no-cache',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -32,8 +32,8 @@ export default class CommentsService {
     }
 
     saveAnswer(commentId, {name, message}) {
-        console.debug('Calling service for saving an answer', this.commentsHref + commentId);
-        return fetch(this.commentsHref + commentId, {
+        console.debug('Calling service for saving an answer', new URL(this.commentsHref, this.serviceEndpoint));
+        return fetch(new URL(this.commentsHref + '/' + commentId, this.serviceEndpoint).href, {
             method: 'POST',
             cache: 'no-cache',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
