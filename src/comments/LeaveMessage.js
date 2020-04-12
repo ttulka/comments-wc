@@ -192,7 +192,7 @@ export default class LeaveMessage extends HTMLElement {
             this.message.classList.add('error');
             hasError = true;
         }
-        if (captcha.toUpperCase() !== this.captchaFn.getCode().toUpperCase()) {
+        if (captcha && captcha.toUpperCase() !== this.captchaFn.getCode().toUpperCase()) {
             this.showError(WRONG_CAPTCHA);
             this.captcha.classList.add('error');
             this.captcha.value = '';
