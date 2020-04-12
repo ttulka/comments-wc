@@ -115,12 +115,12 @@ export default class Comment extends HTMLElement {
         this._listeners.removeAllListeners();
     }
 
-    showAnswer(data) {
+    showAnswer({author, createdAt, body}) {
         const answer = new Answer();
         answer.innerHTML = `
-            <span slot="author">${safeText(data.author)}</span>
-            <span slot="createdAt">${safeText(data.createdAt)}</span>
-            <span slot="body">${linkify(safeText(data.body))}</span>
+            <span slot="author">${safeText(author)}</span>
+            <span slot="createdAt">${safeText(createdAt)}</span>
+            <span slot="body">${linkify(safeText(body))}</span>
         `;
         this.answersContainer.appendChild(answer);
     }
