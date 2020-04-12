@@ -76,13 +76,6 @@ export default class Comment extends HTMLElement {
         this.root = this.attachShadow({mode: 'open'});
         this.root.appendChild(template.content.cloneNode(true));
 
-        this.dispatchEvent = this.dispatchEvent.bind(this);
-        this.showAnswer = this.showAnswer.bind(this);
-        this.showPagination = this.showPagination.bind(this);
-        this.hidePagination = this.hidePagination.bind(this);
-        this.showLoading = this.showLoading.bind(this);
-        this.hideLoading = this.hideLoading.bind(this);
-
         const answers = this.root.querySelector('.answers');
         this.answersContainer = answers.querySelector('.container');
 

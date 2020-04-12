@@ -19,14 +19,21 @@ export default class Loading extends HTMLElement {
         super();
         this.root = this.attachShadow({mode: 'open'});
         this.root.appendChild(template.content.cloneNode(true));
-
-        this.show = this.show.bind(this);
-        this.hide = this.hide.bind(this);
     }
 
     connectedCallback() {
         if (this.getAttribute('hide')) {
             this.hide();
+        }
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'hide') {
+            if (newValue && newValue.toLowerCase() !== 'false') {
+                this.hide();
+            } else {
+                this.show();
+            }
         }
     }
 

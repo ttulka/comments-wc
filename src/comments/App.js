@@ -32,12 +32,6 @@ export default class App extends HTMLElement {
         this.root = this.attachShadow({mode: 'open'});
         this.root.appendChild(template.content.cloneNode(true));
 
-        this.loadComments = this.loadComments.bind(this);
-        this.showComment = this.showComment.bind(this);
-        this.loadAnswers = this.loadAnswers.bind(this);
-        this.leaveComment = this.leaveComment.bind(this);
-        this.leaveAnswer = this.leaveAnswer.bind(this);
-
         this.service = new CommentsService(this.getAttribute('service'), this.getAttribute('postId'));
 
         this.comments = this.root.querySelector('.comments');
@@ -79,7 +73,7 @@ export default class App extends HTMLElement {
                         this.nextCommentsListener.handle = () => this.loadComments(data.next);
                     }
                 })
-                .finally(this.loading.hide);
+                .finally(() => this.loading.hide());
     }
 
     showComment(data, first = false) {
@@ -92,7 +86,7 @@ export default class App extends HTMLElement {
         this._listeners.addListener(comment, 'comment:leave-answer', ({detail}) => this.leaveAnswer(data.id, detail, comment));
 
         if (data.answers) {
-            data.answers.forEach(comment.showAnswer);
+            data.answers.forEach(a => comment.showAnswer(a));
         }
         if (data.next) {
             const nextAnswersListeners = e => this.loadAnswers(comment, data.next);
@@ -116,13 +110,13 @@ export default class App extends HTMLElement {
         this.service.loadAnswers(next)
                 .then(formatAnswers)
                 .then(data => {
-                    data.answers.forEach(comment.showAnswer);
+                    data.answers.forEach(a => comment.showAnswer(a));
                     if (data.next) {
                         this.nextAnswersListeners[comment.id].handle = () => this.loadAnswers(comment, data.next);
                         comment.showPagination();
                     }
                 })
-                .finally(comment.hideLoading);
+                .finally(() => comment.hideLoading());
     }
 
     leaveComment({name, message}) {
@@ -134,7 +128,7 @@ export default class App extends HTMLElement {
     leaveAnswer(commentId, {name, message}, comment) {
         this.service.saveAnswer(commentId, {name, message})
                 .then(formatComment)
-                .then(comment.showAnswer);
+                .then(a => comment.showAnswer(a));
     }
 }
 customElements.define('comments-app', App);

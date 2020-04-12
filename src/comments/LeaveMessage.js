@@ -76,6 +76,7 @@ template.innerHTML = `
     }
     .captcha canvas {
         height: 2em;
+        cursor: pointer;
     }
     .title {
         font-size: 1.5em;
@@ -132,20 +133,19 @@ export default class LeaveMessage extends HTMLElement {
         this.root = this.attachShadow({mode: 'open'});
         this.root.appendChild(template.content.cloneNode(true));
 
-        this.dispatchEvent = this.dispatchEvent.bind(this);
-        this.onFormSubmit = this.onFormSubmit.bind(this);
-        this.reloadCaptcha = this.reloadCaptcha.bind(this);
-        this.checkMaxChars = this.checkMaxChars.bind(this);
-        this.showSuccess = this.showSuccess.bind(this);
-        this.showError = this.showError.bind(this);
-        this.cleanAlert = this.cleanAlert.bind(this);
-        this.focus = this.focus.bind(this);
+        // this.dispatchEvent = this.dispatchEvent.bind(this);
+        // this.onFormSubmit = this.onFormSubmit.bind(this);
+        // this.reloadCaptcha = this.reloadCaptcha.bind(this);
+        // this.checkMaxChars = this.checkMaxChars.bind(this);
+        // this.showSuccess = this.showSuccess.bind(this);
+        // this.showError = this.showError.bind(this);
+        // this.cleanAlert = this.cleanAlert.bind(this);
+        // this.focus = this.focus.bind(this);
 
         this.captchaFn = new Captcha();
         this.captchaCanvas = this.root.querySelector('canvas#captcha');
 
         this.form = this.root.querySelector('form');
-        this.submitListener = e => e.preventDefault() & this.onFormSubmit();
 
         this.error = this.root.querySelector('.alert.error');
         this.success = this.root.querySelector('.alert.success');
@@ -158,9 +158,9 @@ export default class LeaveMessage extends HTMLElement {
     }
 
     connectedCallback() {
-        this._listeners.addListener(this.form, 'submit', this.submitListener);
-        this._listeners.addListener(this.captchaCanvas,'click', this.reloadCaptcha);
-        this._listeners.addListener(this.message,'keyup', this.checkMaxChars);
+        this._listeners.addListener(this.form, 'submit', e => e.preventDefault() & this.onFormSubmit());
+        this._listeners.addListener(this.captchaCanvas,'click', e => this.reloadCaptcha());
+        this._listeners.addListener(this.message,'keyup', e => this.checkMaxChars());
 
         this.reloadCaptcha();
     }
@@ -170,6 +170,8 @@ export default class LeaveMessage extends HTMLElement {
     }
 
     onFormSubmit() {
+        this.cleanAlert();
+
         const name = this.name.value.trim().substring(0, 50);
         const message = this.message.value.trim().substring(0, 1000);
         const captcha = this.captcha.value.trim();
