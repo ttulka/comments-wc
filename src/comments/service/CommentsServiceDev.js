@@ -11,7 +11,7 @@ export default class CommentsService {
 
     loadComments(next = 'server.json') {
         console.log('calling service', this.serviceEndpoint + next);
-        return wait(1000).then(() =>
+        return wait(500).then(() =>
             fetch(this.serviceEndpoint + next)
                 .then(data => data.json())
         );
@@ -29,14 +29,14 @@ export default class CommentsService {
     saveComment({name, message}) {
         console.log('calling service: leaveComment', name, message);
         return Promise.resolve({
-            author: name, body: message, createdAt: new Date().getTime()
+            author: name, body: message, createdAt: new Date().getTime() / 1000
         });
     }
 
     saveAnswer(commentId, {name, message}) {
         console.log('calling service: leaveAnswer', commentId, name, message);
         return Promise.resolve({
-           author: name, body: message, createdAt: new Date().getTime()
+           author: name, body: message, createdAt: new Date().getTime() / 1000
        });
     }
 }
