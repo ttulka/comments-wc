@@ -35,6 +35,7 @@ template.innerHTML = `
     .card {
         word-wrap: break-word;
         background-color: #fff;
+        color: #000;
         background-clip: border-box;
         border: 1px solid rgba(0,0,0,.125);
         border-radius: .25rem;
