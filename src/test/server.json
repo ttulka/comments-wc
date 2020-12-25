@@ -45,7 +45,7 @@
         },
         {
             "id": 4,
-            "body": "My test comment 4 with &copy; <b>HTML</b> <h1>Tags</h1>.",
+            "body": "My *test* _comment_ **4** with `&copy; <b>HTML</b> <h1>Tags</h1>`. And ```\nsome\ncode``` in addition",
             "createdAt": "1549641553",
             "author": "Author 4"
         }

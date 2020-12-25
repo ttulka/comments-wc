@@ -5,6 +5,7 @@ import './BodyLines.js';
 import ListenersHolder from '../common/ListenersHolder.js';
 import safeText from '../common/safeText.js';
 import linkify from '../common/linkify.js';
+import markdown from '../common/markdown.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -114,7 +115,7 @@ export default class Comment extends HTMLElement {
         answer.innerHTML = `
             <span slot="author">${safeText(author)}</span>
             <span slot="createdAt">${safeText(createdAt)}</span>
-            <span slot="body">${linkify(safeText(body))}</span>
+            <span slot="body">${linkify(markdown(safeText(body)))}</span>
         `;
         this.answersContainer.appendChild(answer);
     }
